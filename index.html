@@ -6,101 +6,265 @@
 <title>For Zara ❤️</title>
 
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  color: white;
+body{
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+background:black;
 }
 
-.container {
-  background: rgba(0,0,0,0.4);
-  padding: 40px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
-  position: relative;
-  z-index: 2;
+/* Background Video */
+video{
+position:fixed;
+right:0;
+bottom:0;
+min-width:100%;
+min-height:100%;
+z-index:-2;
+object-fit:cover;
 }
 
-button {
-  margin: 10px;
-  padding: 12px 25px;
-  font-size: 18px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: bold;
+/* Stars */
+.star{
+position:absolute;
+width:2px;height:2px;
+background:white;
+animation:twinkle 2s infinite alternate;
+}
+@keyframes twinkle{from{opacity:0.2;}to{opacity:1;}}
+
+/* Meteor */
+.meteor{
+position:absolute;
+width:3px;height:3px;
+background:white;
+animation:shoot 2s linear forwards;
+}
+@keyframes shoot{
+0%{transform:translate(0,0);}
+100%{transform:translate(400px,400px);opacity:0;}
 }
 
-#yesBtn {
-  background-color: white;
-  color: #ff4b6e;
+/* Password */
+#passwordScreen{
+position:fixed;
+width:100%;height:100%;
+background:black;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+input{padding:10px;border-radius:20px;border:none;margin:10px;}
+
+/* Main */
+.container{
+background:rgba(0,0,0,0.6);
+padding:25px;
+border-radius:20px;
+width:90%;max-width:400px;
+display:none;
 }
 
-#noBtn {
-  background-color: #ff4b6e;
-  color: white;
-  position: absolute;
+button{
+margin:8px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+font-weight:bold;
+cursor:pointer;
+}
+#yesBtn{background:gold;color:black;}
+#noBtn{background:#ff4b6e;color:white;position:absolute;}
+
+.heart,.rose{
+position:absolute;
+animation:float 6s linear infinite;
+}
+@keyframes float{
+0%{transform:translateY(100vh);opacity:1;}
+100%{transform:translateY(-10vh);opacity:0;}
 }
 
-.heart {
-  position: absolute;
-  color: rgba(255,255,255,0.7);
-  font-size: 20px;
-  animation: float 6s linear infinite;
+.firework{
+position:fixed;
+font-size:30px;
+animation:explode 1s ease-out forwards;
+}
+@keyframes explode{
+0%{transform:scale(0);}
+100%{transform:scale(3);opacity:0;}
 }
 
-@keyframes float {
-  0% { transform: translateY(100vh); opacity: 1; }
-  100% { transform: translateY(-10vh); opacity: 0; }
+#loveLetter{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:linear-gradient(to bottom,#1a2a6c,#b21f1f,#fdbb2d);
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:9999;
+}
+
+#photo{
+width:150px;height:150px;
+border-radius:50%;
+border:5px solid gold;
+box-shadow:0 0 20px gold;
+object-fit:cover;
+margin-bottom:15px;
+}
+
+#game{
+margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>Mr Sheikh ❤️ Zara</h1>
-  <p>I love you meri sona 💖</p>
-  <p>Zara, will you be mine forever?</p>
-  <button id="yesBtn" onclick="accepted()">Yes 💖</button>
-  <button id="noBtn" onmouseover="moveButton()">No 😜</button>
+<!-- Background Video (optional) -->
+<video autoplay muted loop>
+<source src="video.mp4" type="video/mp4">
+</video>
+
+<!-- Password -->
+<div id="passwordScreen">
+<h2>Enter Secret Code 💖</h2>
+<input type="password" id="passInput">
+<button onclick="checkPassword()">Open</button>
 </div>
 
+<!-- Main Proposal -->
+<div class="container" id="mainContent">
+<h1>Mr Sheikh ❤️ Zara</h1>
+<p>I love you meri sona 💖</p>
+<p>Will you be mine forever?</p>
+<button id="yesBtn" onclick="accepted()">Yes 💖</button>
+<button id="noBtn" onmouseover="moveButton()">No 😜</button>
+
+<div id="game">
+<p>Mini Love Game 💕<br>Click hearts: <span id="score">0</span></p>
+</div>
+</div>
+
+<!-- Love Letter -->
+<div id="loveLetter">
+<img src="photo.jpg" id="photo">
+<h1>She Said YES 💍💖</h1>
+<p>You are my universe, my peace, my forever ❤️</p>
+<h2>Forever Yours,<br>Mr Sheikh 💕</h2>
+</div>
+
+<audio autoplay loop>
+<source src="music.mp3" type="audio/mp3">
+</audio>
+
 <script>
-function accepted() {
-  alert("Zara ❤️ Forever Yours - Mr Sheikh 💍💖");
+
+/* Stars */
+for(let i=0;i<120;i++){
+let star=document.createElement("div");
+star.classList.add("star");
+star.style.left=Math.random()*100+"vw";
+star.style.top=Math.random()*100+"vh";
+document.body.appendChild(star);
 }
 
-function moveButton() {
-  const button = document.getElementById("noBtn");
-  const x = Math.random() * (window.innerWidth - 100);
-  const y = Math.random() * (window.innerHeight - 50);
-  button.style.left = x + "px";
-  button.style.top = y + "px";
+/* Meteor shower */
+setInterval(()=>{
+let m=document.createElement("div");
+m.classList.add("meteor");
+m.style.left=Math.random()*100+"vw";
+m.style.top=Math.random()*50+"vh";
+document.body.appendChild(m);
+setTimeout(()=>m.remove(),2000);
+},3000);
+
+/* Password */
+function checkPassword(){
+if(document.getElementById("passInput").value==="zara123"){
+document.getElementById("passwordScreen").style.display="none";
+document.getElementById("mainContent").style.display="block";
+}else{alert("Wrong Password 😜");}
 }
 
-// Floating Hearts
-setInterval(() => {
-  const heart = document.createElement("div");
-  heart.classList.add("heart");
-  heart.innerHTML = "❤️";
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = (Math.random() * 20 + 10) + "px";
-  document.body.appendChild(heart);
+/* YES */
+function accepted(){
 
-  setTimeout(() => {
-    heart.remove();
-  }, 6000);
-}, 300);
+let ring=document.createElement("div");
+ring.innerHTML="💍";
+ring.style.position="fixed";
+ring.style.fontSize="90px";
+ring.style.left="50%";
+ring.style.top="50%";
+ring.style.transform="translate(-50%,-50%) scale(0)";
+ring.style.transition="1s";
+ring.style.zIndex="9999";
+document.body.appendChild(ring);
+setTimeout(()=>{ring.style.transform="translate(-50%,-50%) scale(1.5)";},100);
+
+for(let i=0;i<30;i++){
+let fire=document.createElement("div");
+fire.classList.add("firework");
+fire.innerHTML="🎆";
+fire.style.left=Math.random()*100+"vw";
+fire.style.top=Math.random()*100+"vh";
+document.body.appendChild(fire);
+setTimeout(()=>fire.remove(),1000);
+}
+
+setTimeout(()=>{
+document.getElementById("loveLetter").style.display="flex";
+},1500);
+}
+
+/* Move No */
+function moveButton(){
+let btn=document.getElementById("noBtn");
+btn.style.left=Math.random()*(window.innerWidth-100)+"px";
+btn.style.top=Math.random()*(window.innerHeight-50)+"px";
+}
+
+/* Floating hearts + game */
+let score=0;
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.classList.add("heart");
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize="20px";
+heart.onclick=function(){
+score++;
+document.getElementById("score").innerText=score;
+heart.remove();
+}
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),6000);
+},1000);
+
+/* Roses */
+setInterval(()=>{
+let rose=document.createElement("div");
+rose.classList.add("rose");
+rose.innerHTML="🌹";
+rose.style.left=Math.random()*100+"vw";
+rose.style.fontSize="25px";
+document.body.appendChild(rose);
+setTimeout(()=>rose.remove(),6000);
+},1500);
+
 </script>
 
 </body>
